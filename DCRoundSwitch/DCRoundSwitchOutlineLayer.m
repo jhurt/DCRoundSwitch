@@ -13,11 +13,20 @@
 
 @implementation DCRoundSwitchOutlineLayer
 
+@synthesize isSquare;
+
 - (void)drawInContext:(CGContextRef)context
 {
 	// calculate the outline clip
 	CGContextSaveGState(context);
-	UIBezierPath *switchOutline = [UIBezierPath bezierPathWithRoundedRect:self.bounds cornerRadius:self.bounds.size.height / 2.0];
+    UIBezierPath *switchOutline;
+    if(isSquare) {
+        switchOutline = [UIBezierPath bezierPathWithRect:self.bounds];
+    }
+    else {
+        switchOutline = [UIBezierPath bezierPathWithRoundedRect:self.bounds cornerRadius:self.bounds.size.height / 2.0];
+    }
+
 	CGContextAddPath(context, switchOutline.CGPath);
 	CGContextClip(context);
 
@@ -27,9 +36,16 @@
 										   self.frame.size.height / 2.0,
 										   self.bounds.size.width  - (self.frame.size.width * 0.1),
 										   self.bounds.size.height / 2.0);
-	UIBezierPath *innerGlossPath = [UIBezierPath bezierPathWithRoundedRect:innerGlossPathRect
-														 byRoundingCorners:UIRectCornerTopLeft | UIRectCornerTopRight
-															   cornerRadii:CGSizeMake(self.bounds.size.height * 0.3, self.bounds.size.height * 0.3)];
+    UIBezierPath *innerGlossPath;
+    if(isSquare) {
+        innerGlossPath = [UIBezierPath bezierPathWithRect:innerGlossPathRect];
+    }
+    else {
+        innerGlossPath = [UIBezierPath bezierPathWithRoundedRect:innerGlossPathRect
+                                               byRoundingCorners:UIRectCornerTopLeft | UIRectCornerTopRight
+                                                     cornerRadii:CGSizeMake(self.bounds.size.height * 0.3, self.bounds.size.height * 0.3)];
+    }
+    
 	CGContextAddPath(context, innerGlossPath.CGPath);
 	CGContextClip(context);
 
@@ -54,7 +70,14 @@
 	// outline and inner shadow
 	CGContextSetShadowWithColor(context, CGSizeMake(0.0, 1), 2.0, [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1.0].CGColor);
 	CGContextSetLineWidth(context, 0.5);
-	UIBezierPath *outlinePath = [UIBezierPath bezierPathWithRoundedRect:CGRectOffset(self.bounds, -0.5, 0.0) cornerRadius:self.bounds.size.height / 2.0];
+    UIBezierPath *outlinePath;
+    if(isSquare) {
+        outlinePath = [UIBezierPath bezierPathWithRect:CGRectOffset(self.bounds, -0.5, 0.0)];
+	}
+    else {
+        outlinePath = [UIBezierPath bezierPathWithRoundedRect:CGRectOffset(self.bounds, -0.5, 0.0) cornerRadius:self.bounds.size.height / 2.0];
+	}
+        
 	CGContextAddPath(context, outlinePath.CGPath);
 	CGContextSetStrokeColorWithColor(context, [UIColor colorWithWhite:0.60 alpha:1.0].CGColor);
 	CGContextStrokePath(context);

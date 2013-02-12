@@ -15,6 +15,7 @@ CGGradientRef CreateGradientRefWithColors(CGColorSpaceRef colorSpace, CGColorRef
 
 @implementation DCRoundSwitchKnobLayer
 @synthesize gripped;
+@synthesize isSquare;
 
 - (void)drawInContext:(CGContextRef)context
 {
@@ -25,11 +26,21 @@ CGGradientRef CreateGradientRefWithColors(CGColorSpaceRef colorSpace, CGColorRef
 	// knob outline (shadow is drawn in the toggle layer)
 	CGContextSetStrokeColorWithColor(context, [UIColor colorWithWhite:0.62 alpha:1.0].CGColor);
 	CGContextSetLineWidth(context, 1.5);
-	CGContextStrokeEllipseInRect(context, knobRect);
+    if(self.isSquare) {
+        CGContextStrokeRect(context, knobRect);
+    }
+    else {
+        CGContextStrokeEllipseInRect(context, knobRect);
+    }
 	CGContextSetShadowWithColor(context, CGSizeMake(0, 0), 0, NULL);
 
 	// knob inner gradient
-	CGContextAddEllipseInRect(context, knobRect);
+    if(self.isSquare) {
+        CGContextAddRect(context, knobRect);
+    }
+    else {
+        CGContextAddEllipseInRect(context, knobRect);
+    }
 	CGContextClip(context);
 	CGColorRef knobStartColor = [UIColor colorWithWhite:0.82 alpha:1.0].CGColor;
 	CGColorRef knobEndColor = (self.gripped) ? [UIColor colorWithWhite:0.894 alpha:1.0].CGColor : [UIColor colorWithWhite:0.996 alpha:1.0].CGColor;
@@ -40,8 +51,14 @@ CGGradientRef CreateGradientRefWithColors(CGColorSpaceRef colorSpace, CGColorRef
 	CGGradientRelease(knobGradient);
 
 	// knob inner highlight
-	CGContextAddEllipseInRect(context, CGRectInset(knobRect, 0.5, 0.5));
-	CGContextAddEllipseInRect(context, CGRectInset(knobRect, 1.5, 1.5));
+    if(self.isSquare) {
+        CGContextAddRect(context, CGRectInset(knobRect, 0.5, 0.5));
+        CGContextAddRect(context, CGRectInset(knobRect, 0.5, 0.5));
+    }
+    else {
+        CGContextAddEllipseInRect(context, CGRectInset(knobRect, 0.5, 0.5));
+        CGContextAddEllipseInRect(context, CGRectInset(knobRect, 1.5, 1.5));
+    }
 	CGContextEOClip(context);
 	CGGradientRef knobHighlightGradient = CreateGradientRefWithColors(colorSpace, [UIColor whiteColor].CGColor, [UIColor colorWithWhite:1.0 alpha:0.5].CGColor);
 	CGContextDrawLinearGradient(context, knobHighlightGradient, topPoint, bottomPoint, 0);

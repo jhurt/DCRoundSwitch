@@ -27,6 +27,8 @@
 + (Class)outlineLayerClass;
 + (Class)toggleLayerClass;
 
+- (id)initWithFrame:(CGRect)frame isSquare:(BOOL)isSquare;
+
 - (void)setOn:(BOOL)newOn animated:(BOOL)animated;
 - (void)setOn:(BOOL)newOn animated:(BOOL)animated ignoreControlEvents:(BOOL)ignoreControlEvents;
 

@@ -13,4 +13,6 @@
 
 @interface DCRoundSwitchOutlineLayer : CALayer
 
+@property (nonatomic) BOOL isSquare;
+
 @end

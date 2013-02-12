@@ -30,6 +30,10 @@
 @end
 
 @implementation DCRoundSwitch
+{
+    BOOL _isSquare;
+}
+
 @synthesize outlineLayer, toggleLayer, knobLayer, clipLayer, ignoreTap;
 @synthesize on, onText, offText;
 @synthesize onTintColor;
@@ -79,6 +83,17 @@
 		[self setup];
 	}
 
+	return self;
+}
+
+- (id)initWithFrame:(CGRect)frame isSquare:(BOOL)isSquare
+{
+	if ((self = [super initWithFrame:frame]))
+	{
+        _isSquare = isSquare;
+		[self setup];
+	}
+    
 	return self;
 }
 
@@ -132,14 +147,17 @@
 	self.toggleLayer = [[[[[self class] toggleLayerClass] alloc] initWithOnString:self.onText offString:self.offText onTintColor:[UIColor colorWithRed:0.000 green:0.478 blue:0.882 alpha:1.0]] autorelease];
 	self.toggleLayer.drawOnTint = NO;
 	self.toggleLayer.clip = YES;
+    self.toggleLayer.isSquare = _isSquare;
 	[self.layer addSublayer:self.toggleLayer];
 	[self.toggleLayer setNeedsDisplay];
 
 	self.outlineLayer = [[[self class] outlineLayerClass] layer];
+    self.outlineLayer.isSquare = _isSquare;
 	[self.toggleLayer addSublayer:self.outlineLayer];
 	[self.outlineLayer setNeedsDisplay];
 
 	self.knobLayer = [[[self class] knobLayerClass] layer];
+    self.knobLayer.isSquare = _isSquare;
 	[self.layer addSublayer:self.knobLayer];
 	[self.knobLayer setNeedsDisplay];
 
@@ -201,8 +219,13 @@
 
 	// create the layer mask and add that to the toggleLayer
 	self.clipLayer = [CAShapeLayer layer];
-	UIBezierPath *clipPath = [UIBezierPath bezierPathWithRoundedRect:self.bounds
-														cornerRadius:self.bounds.size.height / 2.0];
+    UIBezierPath *clipPath;
+    if(_isSquare) {
+        clipPath = [UIBezierPath bezierPathWithRect:self.bounds];
+    }
+    else {
+        clipPath = [UIBezierPath bezierPathWithRoundedRect:self.bounds cornerRadius:self.bounds.size.height / 2.0];
+    }
 	self.clipLayer.path = clipPath.CGPath;
 	self.toggleLayer.mask = self.clipLayer;
 }

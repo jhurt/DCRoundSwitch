@@ -16,6 +16,7 @@
 @synthesize drawOnTint;
 @synthesize clip;
 @synthesize labelFont;
+@synthesize isSquare;
 
 - (void)dealloc
 {
@@ -51,7 +52,13 @@
 
 	if (self.clip)
 	{
-		UIBezierPath *bezierPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(-self.frame.origin.x + 0.5, 0, self.bounds.size.width / 2.0 + self.bounds.size.height / 2.0 - 1.5, self.bounds.size.height) cornerRadius:self.bounds.size.height / 2.0];
+        UIBezierPath *bezierPath;
+        if(isSquare) {
+            bezierPath = [UIBezierPath bezierPathWithRect:CGRectMake(-self.frame.origin.x + 0.5, 0, self.bounds.size.width / 2.0 + self.bounds.size.height / 2.0 - 1.5, self.bounds.size.height)];
+        }
+        else {
+            bezierPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(-self.frame.origin.x + 0.5, 0, self.bounds.size.width / 2.0 + self.bounds.size.height / 2.0 - 1.5, self.bounds.size.height) cornerRadius:self.bounds.size.height / 2.0];
+        }
 		CGContextAddPath(context, bezierPath.CGPath);
 		CGContextClip(context);
 	}
@@ -71,10 +78,14 @@
 	CGContextSetShadowWithColor(context, CGSizeMake(0, 0), 1.5, [UIColor colorWithWhite:0.2 alpha:1.0].CGColor);
 	CGContextSetStrokeColorWithColor(context, [UIColor colorWithWhite:0.42 alpha:1.0].CGColor);
 	CGContextSetLineWidth(context, 1.0);
-	CGContextStrokeEllipseInRect(context, knobRect);
+    if(isSquare) {
+        CGContextStrokeRect(context, knobRect);
+    }
+    else {
+        CGContextStrokeEllipseInRect(context, knobRect);
+    }
 	CGContextSetShadowWithColor(context, CGSizeMake(0, 0), 0, NULL);
 	
-
 	// strings
 	CGFloat textSpaceWidth = (self.bounds.size.width / 2) - (knobRadius / 2);
 
